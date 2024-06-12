@@ -202,11 +202,9 @@ function ChatRoomMessageDenialShop(SenderCharacter, msg, data) {
           var ActivityName = null;
           var ActivityGroup = null;
           if (data.Dictionary != null) {
-            for (var D = 0; D < data.Dictionary.length; D++) {
-              if ((data.Dictionary[D].MemberNumber != null) && (data.Dictionary[D].Tag == "TargetCharacter")) TargetMemberNumber = data.Dictionary[D].MemberNumber;
-              if (data.Dictionary[D].ActivityName) ActivityName = data.Dictionary[D].ActivityName;
-              if (data.Dictionary[D].FocusGroupName) ActivityGroup = data.Dictionary[D].FocusGroupName;
-            }
+            if (data.Dictionary.find(c => c.TargetCharacter).TargetCharacter) TargetMemberNumber = data.Dictionary.find(c => c.TargetCharacter).TargetCharacter;
+            if (data.Dictionary.find(c => c.ActivityName).ActivityName) ActivityName = data.Dictionary.find(c => c.ActivityName).ActivityName;
+            if (data.Dictionary.find(c => c.FocusGroupName).FocusGroupName) ActivityGroup = data.Dictionary.find(c => c.FocusGroupName).FocusGroupName;
           }
           if (TargetMemberNumber != null && TargetMemberNumber != SenderCharacter.MemberNumber) {
             if (customerList[TargetMemberNumber] == null || customerList[TargetMemberNumber].beingPunished || !customerList[TargetMemberNumber].role.includes("sub")) {
