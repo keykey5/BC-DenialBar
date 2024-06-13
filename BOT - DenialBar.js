@@ -269,7 +269,7 @@ function ChatRoomMessageDenialRule(SenderCharacter, msg, data) {
       for (let D = 0; D < data.Dictionary.length; D++) {
         if (data.Dictionary[D].Automatic) return
       }
-      if ((msg.includes("Vibe") || msg.includes("Dildo") || msg.includes("Buttplug")) && (msg.includes("creaseTo-1") || ((msg.includes("creaseTo") || msg.includes("ModeChange")) && customerList[SenderCharacter.MemberNumber].role != "dom2"))) {
+      if (msg.includes("Vibe") && customerList[SenderCharacter.MemberNumber].role != "dom2") {
         ServerSend("ChatRoomChat", { Content: SenderCharacter.Name + "! Do not mess with the vibrators, you are not allowed to do that. This is a strike for you!", Type: "Chat" }); //Target: SenderCharacter.MemberNumber} );
         customerList[SenderCharacter.MemberNumber].strike = customerList[SenderCharacter.MemberNumber].strike + 1
         targetMemberNumber = data.Dictionary.find(c => c.MemberNumber).MemberNumber
