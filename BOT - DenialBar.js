@@ -183,7 +183,7 @@ function ChatRoomMessageDenialShop(SenderCharacter, msg, data) {
           mess = `To buy an item say '!buy <item>' or '/bot !buy <item>'.\nHere is a list of available items:\n-----------------------------------\nPermission (`+ permissionCost + ` pt)\nAdulation (`+ adulationCost + ` pt)\nPunishment (`+ punishmentCost + ` pt)`
 
           if (customerList[SenderCharacter.MemberNumber].role != "dom2") {
-            mess = mess + `\nDomLv2 (change vibrator settings) (` + DomLv2Cost + ` pt)` + nl
+            mess = mess + `\nDomLv2 (change vibrator settings) (` + DomLv2Cost + ` pt)`
           }
           mess = mess + `\n-----------------------------------`
 
