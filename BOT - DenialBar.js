@@ -272,23 +272,20 @@ function ChatRoomMessageDenialRule(SenderCharacter, msg, data) {
       if ((msg.includes("Vibe") || msg.includes("Dildo") || msg.includes("Buttplug")) && (msg.includes("creaseTo-1") || ((msg.includes("creaseTo") || msg.includes("ModeChange")) && customerList[SenderCharacter.MemberNumber].role != "dom2"))) {
         ServerSend("ChatRoomChat", { Content: SenderCharacter.Name + "! Do not mess with the vibrators, you are not allowed to do that. This is a strike for you!", Type: "Chat" }); //Target: SenderCharacter.MemberNumber} );
         customerList[SenderCharacter.MemberNumber].strike = customerList[SenderCharacter.MemberNumber].strike + 1
-        targetMemberNumber = data.Dictionary[0].MemberNumber
-        for (R = 0; R < ChatRoomCharacter.length; R++) {
-          if (ChatRoomCharacter[R].MemberNumber == targetMemberNumber) {
-            dildoAsset = InventoryGet(ChatRoomCharacter[R], "ItemVulva")
-            buttAsset = InventoryGet(ChatRoomCharacter[R], "ItemButt")
-            if (dildoAsset) {
-              dildoAsset.Property = { Mode: VibratorModeList[customerList[targetMemberNumber].vulvaIntensity + 1], 'Intensity': customerList[targetMemberNumber].vulvaIntensity, Effect: ["Egged"] }
-              if (customerList[targetMemberNumber].vulvaIntensity > -1) { dildoAsset.Property.Effect = ["Egged", "Vibrating"] }
-            }
-            if (buttAsset) {
-              buttAsset.Property = { 'Intensity': customerList[targetMemberNumber].buttIntensity, Effect: ["Egged"] }
-              if (customerList[targetMemberNumber].buttIntensity > -1) { buttAsset.Property.Effect = ["Egged", "Vibrating"] }
-            }
-            ChatRoomCharacterUpdate(ChatRoomCharacter[R])
-            ServerSend("ChatRoomChat", { Content: "*The vibrator automatically returns to the initial setting.", Type: "Emote" });
-          }
+        targetMemberNumber = data.Dictionary.find(c => c.MemberNumber).MemberNumber
+        targetCharacter = ChatRoomCharacter.find(c => c.MemberNumber == targetMemberNumber)
+        dildoAsset = InventoryGet(targetCharacter, "ItemVulva")
+        buttAsset = InventoryGet(targetCharacter, "ItemButt")
+        if (dildoAsset) {
+          dildoAsset.Property = { Mode: VibratorModeList[customerList[targetMemberNumber].vulvaIntensity + 1], 'Intensity': customerList[targetMemberNumber].vulvaIntensity, Effect: ["Egged"] }
+          if (customerList[targetMemberNumber].vulvaIntensity > -1) { dildoAsset.Property.Effect = ["Egged", "Vibrating"] }
         }
+        if (buttAsset) {
+          buttAsset.Property = { 'Intensity': customerList[targetMemberNumber].buttIntensity, Effect: ["Egged"] }
+          if (customerList[targetMemberNumber].buttIntensity > -1) { buttAsset.Property.Effect = ["Egged", "Vibrating"] }
+        }
+        ChatRoomCharacterUpdate(targetCharacter)
+        ServerSend("ChatRoomChat", { Content: "*The vibrator automatically returns to the initial setting.", Type: "Emote" });
         if (customerList[SenderCharacter.MemberNumber].strike > 2) {
           ServerSend("ChatRoomChat", { Content: "Now you are going to be punished.", Type: "Chat" });
           dressLike(SenderCharacter.MemberNumber, "doll", update = false)
