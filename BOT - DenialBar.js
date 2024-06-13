@@ -180,17 +180,12 @@ function ChatRoomMessageDenialShop(SenderCharacter, msg, data) {
           }
         } else {
           
-          mess = `To buy an item say '!buy <item>' or '/bot !buy <item>'.
-          Here is a list of available items:
-          -----------------------------------
-          Permission (`+ permissionCost + ` pt)
-          Adulation (`+ adulationCost + ` pt)
-          Punishment (`+ punishmentCost + ` pt)`
+          mess = `To buy an item say '!buy <item>' or '/bot !buy <item>'.\nHere is a list of available items:\n-----------------------------------\nPermission (`+ permissionCost + ` pt)\nAdulation (`+ adulationCost + ` pt)\nPunishment (`+ punishmentCost + ` pt)`
 
           if (customerList[SenderCharacter.MemberNumber].role != "dom2") {
-            mess = mess + `DomLv2 (change vibrator settings) (` + DomLv2Cost + ` pt)` + nl
+            mess = mess + `\nDomLv2 (change vibrator settings) (` + DomLv2Cost + ` pt)` + nl
           }
-          mess = mess + `-----------------------------------`
+          mess = mess + `\n-----------------------------------`
 
           ServerSend("ChatRoomChat", { Content: mess, Type: "Chat", Target: SenderCharacter.MemberNumber });
         }
