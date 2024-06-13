@@ -180,17 +180,12 @@ function ChatRoomMessageDenialShop(SenderCharacter, msg, data) {
           }
         } else {
           
-          mess = `To buy an item say '!buy <item>' or '/bot !buy <item>'.
-          Here is a list of available items:
-          -----------------------------------
-          Permission (`+ permissionCost + ` pt)
-          Adulation (`+ adulationCost + ` pt)
-          Punishment (`+ punishmentCost + ` pt)`
+          mess = `To buy an item say '!buy <item>' or '/bot !buy <item>'.\nHere is a list of available items:\n-----------------------------------\nPermission (`+ permissionCost + ` pt)\nAdulation (`+ adulationCost + ` pt)\nPunishment (`+ punishmentCost + ` pt)`
 
           if (customerList[SenderCharacter.MemberNumber].role != "dom2") {
-            mess = mess + `DomLv2 (change vibrator settings) (` + DomLv2Cost + ` pt)` + nl
+            mess = mess + `\nDomLv2 (change vibrator settings) (` + DomLv2Cost + ` pt)`
           }
-          mess = mess + `-----------------------------------`
+          mess = mess + `\n-----------------------------------`
 
           ServerSend("ChatRoomChat", { Content: mess, Type: "Chat", Target: SenderCharacter.MemberNumber });
         }
@@ -202,11 +197,9 @@ function ChatRoomMessageDenialShop(SenderCharacter, msg, data) {
           var ActivityName = null;
           var ActivityGroup = null;
           if (data.Dictionary != null) {
-            for (var D = 0; D < data.Dictionary.length; D++) {
-              if ((data.Dictionary[D].MemberNumber != null) && (data.Dictionary[D].Tag == "TargetCharacter")) TargetMemberNumber = data.Dictionary[D].MemberNumber;
-              if (data.Dictionary[D].ActivityName) ActivityName = data.Dictionary[D].ActivityName;
-              if (data.Dictionary[D].FocusGroupName) ActivityGroup = data.Dictionary[D].FocusGroupName;
-            }
+            if (data.Dictionary.find(c => c.TargetCharacter).TargetCharacter) TargetMemberNumber = data.Dictionary.find(c => c.TargetCharacter).TargetCharacter;
+            if (data.Dictionary.find(c => c.ActivityName).ActivityName) ActivityName = data.Dictionary.find(c => c.ActivityName).ActivityName;
+            if (data.Dictionary.find(c => c.FocusGroupName).FocusGroupName) ActivityGroup = data.Dictionary.find(c => c.FocusGroupName).FocusGroupName;
           }
           if (TargetMemberNumber != null && TargetMemberNumber != SenderCharacter.MemberNumber) {
             if (customerList[TargetMemberNumber] == null || customerList[TargetMemberNumber].beingPunished || !customerList[TargetMemberNumber].role.includes("sub")) {
@@ -271,26 +264,23 @@ function ChatRoomMessageDenialRule(SenderCharacter, msg, data) {
       for (let D = 0; D < data.Dictionary.length; D++) {
         if (data.Dictionary[D].Automatic) return
       }
-      if ((msg.includes("Vibe") || msg.includes("Dildo") || msg.includes("Buttplug")) && (msg.includes("creaseTo-1") || ((msg.includes("creaseTo") || msg.includes("ModeChange")) && customerList[SenderCharacter.MemberNumber].role != "dom2"))) {
+      if (msg.includes("Vibe") && customerList[SenderCharacter.MemberNumber].role != "dom2" && customerList[data.Dictionary.find(c => c.MemberNumber).MemberNumber].role.includes("sub")) {
         ServerSend("ChatRoomChat", { Content: SenderCharacter.Name + "! Do not mess with the vibrators, you are not allowed to do that. This is a strike for you!", Type: "Chat" }); //Target: SenderCharacter.MemberNumber} );
         customerList[SenderCharacter.MemberNumber].strike = customerList[SenderCharacter.MemberNumber].strike + 1
-        targetMemberNumber = data.Dictionary[0].MemberNumber
-        for (R = 0; R < ChatRoomCharacter.length; R++) {
-          if (ChatRoomCharacter[R].MemberNumber == targetMemberNumber) {
-            dildoAsset = InventoryGet(ChatRoomCharacter[R], "ItemVulva")
-            buttAsset = InventoryGet(ChatRoomCharacter[R], "ItemButt")
-            if (dildoAsset) {
-              dildoAsset.Property = { Mode: VibratorModeList[customerList[targetMemberNumber].vulvaIntensity + 1], 'Intensity': customerList[targetMemberNumber].vulvaIntensity, Effect: ["Egged"] }
-              if (customerList[targetMemberNumber].vulvaIntensity > -1) { dildoAsset.Property.Effect = ["Egged", "Vibrating"] }
-            }
-            if (buttAsset) {
-              buttAsset.Property = { 'Intensity': customerList[targetMemberNumber].buttIntensity, Effect: ["Egged"] }
-              if (customerList[targetMemberNumber].buttIntensity > -1) { buttAsset.Property.Effect = ["Egged", "Vibrating"] }
-            }
-            ChatRoomCharacterUpdate(ChatRoomCharacter[R])
-            ServerSend("ChatRoomChat", { Content: "*The vibrator automatically returns to the initial setting.", Type: "Emote" });
-          }
+        targetMemberNumber = data.Dictionary.find(c => c.MemberNumber).MemberNumber
+        targetCharacter = ChatRoomCharacter.find(c => c.MemberNumber == targetMemberNumber)
+        dildoAsset = InventoryGet(targetCharacter, "ItemVulva")
+        buttAsset = InventoryGet(targetCharacter, "ItemButt")
+        if (dildoAsset) {
+          dildoAsset.Property = { Mode: VibratorModeList[customerList[targetMemberNumber].vulvaIntensity + 1], 'Intensity': customerList[targetMemberNumber].vulvaIntensity, Effect: ["Egged"] }
+          if (customerList[targetMemberNumber].vulvaIntensity > -1) { dildoAsset.Property.Effect = ["Egged", "Vibrating"] }
         }
+        if (buttAsset) {
+          buttAsset.Property = { 'Intensity': customerList[targetMemberNumber].buttIntensity, Effect: ["Egged"] }
+          if (customerList[targetMemberNumber].buttIntensity > -1) { buttAsset.Property.Effect = ["Egged", "Vibrating"] }
+        }
+        ChatRoomCharacterUpdate(targetCharacter)
+        ServerSend("ChatRoomChat", { Content: "*The vibrator automatically returns to the initial setting.", Type: "Emote" });
         if (customerList[SenderCharacter.MemberNumber].strike > 2) {
           ServerSend("ChatRoomChat", { Content: "Now you are going to be punished.", Type: "Chat" });
           dressLike(SenderCharacter.MemberNumber, "doll", update = false)
